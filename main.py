@@ -67,7 +67,7 @@ def index():
             'Referer': 'https://i-love.space',  
         }
 
-        r2 = requests.get(f"https://nominatim.openstreetmap.org/reverse?lat=${r["latitude"]}&lon=${r["longitude"]}&format=json", headers=headers).json()
+        r2 = requests.get(f"https://nominatim.openstreetmap.org/reverse?lat=${r['latitude']}&lon=${r['longitude']}&format=json", headers=headers).json()
         print(r2)
         
         return render_template("index.html", json=r, ip=user_ip)
