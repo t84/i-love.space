@@ -6,7 +6,7 @@ from flask_caching import Cache
 
 api_key = "28662158-d89a-4a27-a202-0584ee64e9cf:ecf887cc93015e93ba12e7deec48f22837cdab04b352f4a60ce7e7c748c84e92b8ad0120944c8c1a16b28c50b9effbd626e57cdfdf6b74dac368814da98ebdfdac392c47290de1ddfc96ed3fe94e68ef2961c30ba3e292107ca1da2c4e99e4328396a0c2fbb98c2bb5f402c96ef08eb9"
 apikey = "49be3a765aa44ec1a02e6baddcaaeb50"
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
 
 DEVELOPMENT_ENV = True
 
