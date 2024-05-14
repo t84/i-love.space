@@ -14,54 +14,55 @@ def index():
 
     try:
         data = requests.get(f"http://ip-api.com/json/{user_ip}", timeout=5).json()
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Basic {base64.b64encode(api_key.encode()).decode()}',
-        }
+    #    headers = {
+    #        'Content-Type': 'application/json',
+    #        'Authorization': f'Basic {base64.b64encode(api_key.encode()).decode()}',
+    #    }
+    #    
+    #    # Moon Phase Image Request
+    #    moon_json_data = {
+    #        "format": "png",
+    #        "style": {
+    #            "moonStyle": "sketch",
+    #            "backgroundStyle": "stars",
+    #            "backgroundColor": "red",
+    #            "headingColor": "white",
+    #            "textColor": "red"
+    #        },
+    #        "observer": {
+    #            "latitude": data['lat'],
+    #            "longitude": data['lon'],
+    #            "date": datetime.now().strftime("%Y-%m-%d")
+    #        },
+    #        "view": {
+    #            "type": "portrait-simple"
+    #        }
+    #    }
+    #    moon_response = requests.post('https://api.astronomyapi.com/api/v2/studio/moon-phase', headers=headers, json=moon_json_data, timeout=10)
+    #    moon_response.raise_for_status()  # Raise an exception for non-200 status codes
+    #    moon_image_url = moon_response.json()['data']['imageUrl']
+    #    
+    #    # Stars Image Request
+    #    stars_json_data = {
+    #        "style": "inverted",
+    #        "observer": {
+    #            "latitude": data['lat'],
+    #            "longitude": data['lon'],
+    #            "date": datetime.now().strftime("%Y-%m-%d")
+    #        },
+    #        "view": {
+    #            "type": "constellation",
+    #            "parameters": {
+    #                "constellation": "and"
+    #            }
+    #        }
+    #    }
+    #    stars_response = requests.post('https://api.astronomyapi.com/api/v2/studio/star-chart', headers=headers, json=stars_json_data, timeout=10)
+    #    stars_response.raise_for_status()  # Raise an exception for non-200 status codes
+    #    stars_image_url = stars_response.json()['data']['imageUrl']
+        r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
         
-        # Moon Phase Image Request
-        moon_json_data = {
-            "format": "png",
-            "style": {
-                "moonStyle": "sketch",
-                "backgroundStyle": "stars",
-                "backgroundColor": "red",
-                "headingColor": "white",
-                "textColor": "red"
-            },
-            "observer": {
-                "latitude": data['lat'],
-                "longitude": data['lon'],
-                "date": datetime.now().strftime("%Y-%m-%d")
-            },
-            "view": {
-                "type": "portrait-simple"
-            }
-        }
-        moon_response = requests.post('https://api.astronomyapi.com/api/v2/studio/moon-phase', headers=headers, json=moon_json_data, timeout=10)
-        moon_response.raise_for_status()  # Raise an exception for non-200 status codes
-        moon_image_url = moon_response.json()['data']['imageUrl']
-        
-        # Stars Image Request
-        stars_json_data = {
-            "style": "inverted",
-            "observer": {
-                "latitude": data['lat'],
-                "longitude": data['lon'],
-                "date": datetime.now().strftime("%Y-%m-%d")
-            },
-            "view": {
-                "type": "constellation",
-                "parameters": {
-                    "constellation": "and"
-                }
-            }
-        }
-        stars_response = requests.post('https://api.astronomyapi.com/api/v2/studio/star-chart', headers=headers, json=stars_json_data, timeout=10)
-        stars_response.raise_for_status()  # Raise an exception for non-200 status codes
-        stars_image_url = stars_response.json()['data']['imageUrl']
-        
-        return render_template("index.html", image=moon_image_url, image2=stars_image_url, ip=user_ip)
+        return render_template("index.html", json=r, ip=user_ip)
     
     except requests.RequestException as e:
         # Log the error
