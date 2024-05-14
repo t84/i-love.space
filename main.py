@@ -16,7 +16,7 @@ def index():
         data = requests.get(f"http://ip-api.com/json/{user_ip}", timeout=5).json()
         headers = {
             'Content-Type': 'application/json',
-            'Authorization': f'Basic {base64.b64encode(API_KEY.encode()).decode()}',
+            'Authorization': f'Basic {base64.b64encode(api_key.encode()).decode()}',
         }
         
         # Moon Phase Image Request
@@ -62,6 +62,12 @@ def index():
         stars_image_url = stars_response.json()['data']['imageUrl']
         
         return render_template("index.html", image=moon_image_url, image2=stars_image_url, ip=user_ip)
+    
+    except requests.RequestException as e:
+        # Log the error
+        print(f"Error fetching data: {e}")
+        # Return an error page or handle the error as appropriate
+        return "An error occurred while fetching data. Please try again later."
 
 
 if __name__ == "__main__":
