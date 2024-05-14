@@ -10,61 +10,58 @@ DEVELOPMENT_ENV = True
 
 @app.route('/', methods=['GET'])
 def index():
-    print(request.headers.get('X-Forwarded-For', request.remote_addr))
-    user_ip = request.headers.get('X-Forwarded-For', request.remote_addr) #request.remote_addr
+    user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
-    data = requests.get(f"http://ip-api.com/json/{user_ip}").json()
-
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Basic {base64.b64encode(api_key.encode()).decode()}',
-    }
-    json_data = {
-        "format": "png",
-        "style": {
-            "moonStyle": "sketch",
-            "backgroundStyle": "stars",
-            "backgroundColor": "red",
-            "headingColor": "white",
-            "textColor": "red"
-        },
-        "observer": {
-            "latitude": data['lat'],
-            "longitude": data['lon'],
-            "date": datetime.now().strftime("%Y-%m-%d")
-        },
-        "view": {
-            "type": "portrait-simple",
-            #"orientation": "south-up"
+    try:
+        data = requests.get(f"http://ip-api.com/json/{user_ip}", timeout=5).json()
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Basic {base64.b64encode(API_KEY.encode()).decode()}',
         }
-    }
-    response_moon_image = requests.post('https://api.astronomyapi.com/api/v2/studio/moon-phase', headers=headers, json=json_data).json()['data']['imageUrl']
-
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Basic {base64.b64encode(api_key.encode()).decode()}',
-    }
-    json_data = {
-        "style": "inverted",
-        "observer": {
-            "latitude": data['lat'],
-            "longitude": data['lon'],
-            "date": datetime.now().strftime("%Y-%m-%d")
-        },
-        "view": {
-            "type": "constellation",
-            "parameters": {
-                "constellation": "and"
+        
+        # Moon Phase Image Request
+        moon_json_data = {
+            "format": "png",
+            "style": {
+                "moonStyle": "sketch",
+                "backgroundStyle": "stars",
+                "backgroundColor": "red",
+                "headingColor": "white",
+                "textColor": "red"
+            },
+            "observer": {
+                "latitude": data['lat'],
+                "longitude": data['lon'],
+                "date": datetime.now().strftime("%Y-%m-%d")
+            },
+            "view": {
+                "type": "portrait-simple"
             }
         }
-    }
-    response_stars_image = requests.post('https://api.astronomyapi.com/api/v2/studio/star-chart', headers=headers, json=json_data).json()['data']['imageUrl']
-
-
-    
-
-    
-    return render_template("index.html", image=response_moon_image, image2=response_stars_image, ip=user_ip) 
+        moon_response = requests.post('https://api.astronomyapi.com/api/v2/studio/moon-phase', headers=headers, json=moon_json_data, timeout=10)
+        moon_response.raise_for_status()  # Raise an exception for non-200 status codes
+        moon_image_url = moon_response.json()['data']['imageUrl']
+        
+        # Stars Image Request
+        stars_json_data = {
+            "style": "inverted",
+            "observer": {
+                "latitude": data['lat'],
+                "longitude": data['lon'],
+                "date": datetime.now().strftime("%Y-%m-%d")
+            },
+            "view": {
+                "type": "constellation",
+                "parameters": {
+                    "constellation": "and"
+                }
+            }
+        }
+        stars_response = requests.post('https://api.astronomyapi.com/api/v2/studio/star-chart', headers=headers, json=stars_json_data, timeout=10)
+        stars_response.raise_for_status()  # Raise an exception for non-200 status codes
+        stars_image_url = stars_response.json()['data']['imageUrl']
+        
+        return render_template("index.html", image=moon_image_url, image2=stars_image_url, ip=user_ip)
 
 
 if __name__ == "__main__":
