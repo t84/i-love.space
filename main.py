@@ -16,13 +16,6 @@ DEVELOPMENT_ENV = True
 # Configure Flask-Caching
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
-# Configure Flask-Limiter
-limiter = Limiter(
-    app,
-    key_func=get_remote_address,
-    default_limits=["10 per minute"]
-)
-
 
 
 
@@ -33,8 +26,6 @@ def index():
     try:
         data = requests.get(f"http://ip-api.com/json/{user_ip}", timeout=5).json()
         
-
-
         r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
 
         headers = {
@@ -42,13 +33,10 @@ def index():
             'Referer': 'https://i-love.space',  
         }
 
-        #print(r['latitude'], r['longitude'])
 
         url = f"https://api.geoapify.com/v1/geocode/reverse?lat={r['latitude']}&lon={r['longitude']}&apiKey={apikey}"
 
-        # Make the request to the geocoding service
         r2 = requests.get(url, headers=headers).json()        
-        #print(r2)
         country_name = r2['features'][0]['properties']['name']
         
         iss_json = {"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}}
@@ -62,25 +50,25 @@ def index():
     
 
 @app.route('/api/update_iss', methods=['GET'])
-@limiter.limit("1 per 10 seconds")
-@cache.cached(timeout=10)  
 def update_iss():
-    r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
+    cached_response = cache.get('update_iss_response')
+    if cached_response:
+        return jsonify(cached_response, "THIS WAS CACHED")
 
+    r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
     headers = {
         'User-Agent': 'https://i-love.space',
         'Referer': 'https://i-love.space',  
     }
-
-    #print(r['latitude'], r['longitude'])
-
     url = f"https://api.geoapify.com/v1/geocode/reverse?lat={r['latitude']}&lon={r['longitude']}&apiKey={apikey}"
-
     r2 = requests.get(url, headers=headers).json()        
-    #print(r2)
     country_name = r2['features'][0]['properties']['name']
 
-    return jsonify({"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}})
+    response_data = {"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}}
+
+    cache.set('update_iss_response', response_data, timeout=10)
+
+    return jsonify(response_data)
 
 if __name__ == "__main__":
     app.run(debug=DEVELOPMENT_ENV, port=5000, threaded=True)
