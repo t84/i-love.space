@@ -23,7 +23,11 @@ def rate_limit():
     remote_ip = request.remote_addr
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
-    print(remote_ip, user_ip, remote_ip != user_ip)
+    i = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    l = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+    print(i, l)
+
+    #print(remote_ip, user_ip, remote_ip != user_ip)
 
     if endpoint in api:
         if remote_ip != user_ip:
