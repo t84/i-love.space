@@ -61,6 +61,14 @@ def index():
     #    stars_response.raise_for_status()  # Raise an exception for non-200 status codes
     #    stars_image_url = stars_response.json()['data']['imageUrl']
         r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
+
+        headers = {
+            'User-Agent': 'https://i-love.space',
+            'Referer': 'https://i-love.space',  
+        }
+
+        r2 = requests.get(f"https://nominatim.openstreetmap.org/reverse?lat=${r["latitude"]}&lon=${r["longitude"]}&format=json", headers=headers).json()
+        print(r2)
         
         return render_template("index.html", json=r, ip=user_ip)
     
