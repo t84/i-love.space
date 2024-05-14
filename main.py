@@ -28,23 +28,25 @@ def index():
             return render_template("index.html", country=cached_iss_response['data']['country_name'], lat=cached_iss_response['data']["coordinates"]['latitude'], lon=cached_iss_response['data']["coordinates"]['longitude'], ip=user_ip)
         else:
             data = requests.get(f"http://ip-api.com/json/{user_ip}", timeout=5).json()
-            
+
             r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
-    
+
             headers = {
                 'User-Agent': 'https://i-love.space',
                 'Referer': 'https://i-love.space',  
             }
-    
-    
+
+
             url = f"https://api.geoapify.com/v1/geocode/reverse?lat={r['latitude']}&lon={r['longitude']}&apiKey={apikey}"
-    
+
             r2 = requests.get(url, headers=headers).json()        
-            country_name = r2['features'][0]['properties']['name']
-            
+            print(r2)
+            try:country_name = r2['features'][0]['properties']['name']
+            except:country_name = r2['features'][0]['properties']['country']
+
             iss_json = {"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}}
-    
-            
+
+
             return render_template("index.html", country=iss_json['data']['country_name'], lat=iss_json['data']["coordinates"]['latitude'], lon=iss_json['data']["coordinates"]['longitude'], ip=user_ip)
     
     except requests.RequestException as e:
@@ -65,7 +67,8 @@ def update_iss():
     }
     url = f"https://api.geoapify.com/v1/geocode/reverse?lat={r['latitude']}&lon={r['longitude']}&apiKey={apikey}"
     r2 = requests.get(url, headers=headers).json()        
-    country_name = r2['features'][0]['properties']['name']
+    try:country_name = r2['features'][0]['properties']['name']
+    except:country_name = r2['features'][0]['properties']['country']
 
     response_data = {"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}}
 
