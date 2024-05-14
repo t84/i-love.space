@@ -23,6 +23,8 @@ def rate_limit():
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     remote_ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
 
+    print(remote_ip, user_ip, remote_ip != user_ip)
+
     if endpoint in api:
         if remote_ip != user_ip:
             return jsonify({'error': 'Access forbidden.'}), 403
