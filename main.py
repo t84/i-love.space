@@ -20,14 +20,8 @@ last_access = {}
 @app.before_request
 def rate_limit():
     endpoint = request.endpoint
-    remote_ip = request.remote_addr
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-
-    i = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-    l = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
-    print(i, l)
-
-    #print(remote_ip, user_ip, remote_ip != user_ip)
+    remote_ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
 
     if endpoint in api:
         if remote_ip != user_ip:
