@@ -51,7 +51,7 @@ def index():
 def update_iss():
     cached_response = cache.get('update_iss_response')
     if cached_response:
-        return jsonify(cached_response, "THIS WAS CACHED")
+        return jsonify(cached_response)
 
     r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
     headers = {
