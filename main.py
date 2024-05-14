@@ -22,6 +22,11 @@ def index():
     user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
     try:
+        cached_iss_response = cache.get('update_iss_response')
+        if cached_iss_response:
+        
+            return render_template("index.html", country=cached_iss_response['data']['country_name'], lat=cached_iss_response['data']["coordinates"]['latitude'], lon=cached_iss_response['data']["coordinates"]['longitude'], ip=user_ip)
+        
         data = requests.get(f"http://ip-api.com/json/{user_ip}", timeout=5).json()
         
         r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
@@ -39,7 +44,7 @@ def index():
         
         iss_json = {"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}}
 
-
+        
         return render_template("index.html", country=iss_json['data']['country_name'], lat=iss_json['data']["coordinates"]['latitude'], lon=iss_json['data']["coordinates"]['longitude'], ip=user_ip)
     
     except requests.RequestException as e:
@@ -49,9 +54,9 @@ def index():
 
 @app.route('/api/update_iss', methods=['GET'])
 def update_iss():
-    cached_response = cache.get('update_iss_response')
-    if cached_response:
-        return jsonify(cached_response)
+    cached_iss_response = cache.get('update_iss_response')
+    if cached_iss_response:
+        return jsonify(cached_iss_response)
 
     r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
     headers = {
