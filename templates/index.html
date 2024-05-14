@@ -4,8 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <h1>Hello {{ ip }}!, {{ json }}</h1>
+    <h1 id="current-coordinates">Latitude: {{ lat }}, Longitude: {{ lon }}, Country: {{ country }}</h1>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/P9C25Un7xaM" frameborder="0" allowfullscreen></iframe>
+    <script>
+        function updatedata() {
+            $.get('/api/update_iss', function(data) {
+                $('#current-coordinates').text("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
+                
+                console.log("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
+            });
+        }
+
+        // Update data every 10 seconds
+        setInterval(updatedata, 10000);
+
+    </script>
 </body>
 </html>
