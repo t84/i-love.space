@@ -10,10 +10,9 @@ apikey_geoapify = "49be3a765aa44ec1a02e6baddcaaeb50"
 apikey_nasa = "Ah6cxAedN8mGI9jddu1hhZpLufc036UZE7J6AaBQ"
 
 
-app = Flask(__name__, static_folder=None)
-api = Api(app, title="I-love.space API", version="1.0", description="API for my various space stats", doc="/api")
+app = Flask(__name__)
 
-DEVELOPMENT_ENV = False
+DEVELOPMENT_ENV = True
 
 
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
@@ -61,6 +60,7 @@ def index():
         print(f"Error fetching data: {e}")
         return "An error occurred while fetching data. Please try again later."
     
+api = Api(app, title="I-love.space API", version="1.0", description="API for my various space stats", doc="/api")
 
 @api.route('/api/iss')
 class ISS(Resource):
@@ -196,17 +196,20 @@ class exoplanets(Resource):
 
             data = {}
 
-            def clean_text(text):
-                text = text.replace(" ", "_")
-                text = text.split("(")[0].strip()
-                return text.casefold()
+            data = {}
 
             for row in table.find_all("tr"):
                 columns = row.find_all(["th", "td"])
-                key = clean_text(columns[0].get_text(strip=True))
+                key = columns[0].get_text(strip=True)
                 value = columns[1].get_text(strip=True)
+            
+                # Clean the key
+                key = key.replace(" ", "_").split("(")[0].strip().casefold()
+            
+                # Exclude the "list_of_contributors" key
                 if key != "list_of_contributors":
                     data[key] = value
+
 
             data["credit"] = "https://www.openexoplanetcatalogue.com/"
 
