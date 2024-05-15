@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, jsonify
 import requests, base64
 from datetime import datetime, timedelta
 from flask_caching import Cache
-from flask_restx import Api, Resource
 from bs4 import BeautifulSoup
 
 
