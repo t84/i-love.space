@@ -13,15 +13,14 @@
     <iframe width="560" height="315" src="https://www.youtube.com/embed/P9C25Un7xaM" frameborder="0" allowfullscreen></iframe>
     <script>
         function updatedata() {
-            $.get('/api/update_iss', function(data) {
+            $.get('/api/iss', function(data) {
                 $('#current-coordinates').text("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
                 
                 console.log("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
             });
         }
 
-        // Update data every 10 seconds
-        setInterval(updatedata, 10000);
+        setInterval(updatedata, 1000);
 
     </script>
     <p><em>More coming soon!</em></p>

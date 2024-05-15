@@ -1,17 +1,40 @@
 import requests
-while True:
-    response = requests.get('http://localhost:5000/api/update_iss')
-    
-    # Check if the response is successful
-    if response.status_code == 200:
-        # Check the X-Cache header to see if the response is from cache
-        cache_status = response.headers.get('X-Cache')
-        if cache_status:
-            print(f'Response served from cache: {cache_status}')
-        else:
-            print('Response not served from cache')
-    
-        # Print the response data
-        print(response.json())
-    else:
-        print(f'Error: {response.status_code}')
+from bs4 import BeautifulSoup
+
+# URL of the website
+url = "https://www.openexoplanetcatalogue.com/"
+
+# Send a GET request to the URL
+response = requests.get(url)
+
+# Parse the HTML content
+soup = BeautifulSoup(response.content, "html.parser")
+
+# Find the table containing the statistics
+table = soup.find("table", {"summary": "Statistics"})
+
+# Initialize a dictionary to store the extracted values
+data = {}
+
+# Function to clean the text
+def clean_text(text):
+    # Replace spaces with underscores
+    text = text.replace(" ", "_")
+    # Remove content within parentheses
+    text = text.split("(")[0].strip()
+    return text.casefold()
+
+# Iterate through each row in the table
+for row in table.find_all("tr"):
+    # Extract the text from the th and td elements
+    columns = row.find_all(["th", "td"])
+    key = clean_text(columns[0].get_text(strip=True))
+    value = columns[1].get_text(strip=True)
+    if key != "list_of_contributors":
+        data[key] = value
+
+# Add credit field with the URL
+data["credit"] = "https://www.openexoplanetcatalogue.com/"
+
+# Print the extracted data
+print(data)
