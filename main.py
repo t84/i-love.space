@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from flask_caching import Cache
 from flask_restx import Api, Resource
 from bs4 import BeautifulSoup
-from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 apikey_geoapify = "49be3a765aa44ec1a02e6baddcaaeb50"
@@ -12,7 +11,6 @@ apikey_nasa = "Ah6cxAedN8mGI9jddu1hhZpLufc036UZE7J6AaBQ"
 
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app)
 
 
 DEVELOPMENT_ENV = False
@@ -63,12 +61,9 @@ def index():
         print(f"Error fetching data: {e}")
         return "An error occurred while fetching data. Please try again later."
     
-api = Api(app, title="I-love.space API", version="1.0", description="API for my various space stats", doc="/api")
 
-@api.route('/api/iss')
-class ISS(Resource):
-    @api.doc(description="Get International Space Station (ISS) data")
-    def get(self):
+@app.route('/api/iss')
+def iss():
         cached_iss_response = cache.get('update_iss_response')
         if cached_iss_response:
             r = requests.get('https://api.wheretheiss.at/v1/satellites/25544')
@@ -108,10 +103,8 @@ class ISS(Resource):
         else:
             return jsonify({"message":"error", "error": "Error with API"})
 
-@api.route('/api/peopleinspace', methods=['GET'])
-class peopleinspace(Resource):
-    @api.doc(description="Get information about the people in space")
-    def get(self):
+@app.route('/api/peopleinspace', methods=['GET'])
+def peopleinspace():
         r = requests.get("http://api.open-notify.org/astros.json").json()
 
         if r["message"] == "success":
@@ -131,10 +124,8 @@ class peopleinspace(Resource):
         else:
             return jsonify({"message":"error", "error": "Error with API"})
     
-@api.route('/api/apod', methods=['GET'])
-class APOD(Resource):
-    @api.doc(description="Get information about the picture of the day")
-    def get(self):
+@app.route('/api/apod', methods=['GET'])
+def apod():
         r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={YYYY_MM_DD}")
         if r.status_code == 200:
             json_apod = r.json()
@@ -150,10 +141,8 @@ class APOD(Resource):
         else:
             return jsonify({"message":"error", "error": "Error with API"})
 
-@api.route('/api/solarstorm', methods=['GET'])
-class solarstorm(Resource):
-    @api.doc(description="Get information about the prediction of upcoming solar solar storms")
-    def get(self):
+@app.route('/api/solarstorm', methods=['GET'])
+def solarstorm():
         data = requests.get("https://services.swpc.noaa.gov/products/noaa-scales.json")
 
         if data.status_code == 200:
@@ -186,10 +175,8 @@ class solarstorm(Resource):
         else:
             return jsonify({"message":"error", "error": "Error with API"})
 
-@api.route('/api/exoplanets', methods=['GET'])
-class exoplanets(Resource):
-    @api.doc(description="Get information about the counts of the known exoplanets")
-    def get(self):
+@app.route('/api/exoplanets', methods=['GET'])
+def exoplanets():
         response = requests.get("https://www.openexoplanetcatalogue.com/")
         if response.status_code == 200:
         
