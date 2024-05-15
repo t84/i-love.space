@@ -2,4 +2,4 @@ Flask
 requests
 flask_caching
 flask_restx
-bs4
+beautifulsoup4
