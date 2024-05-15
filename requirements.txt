@@ -3,3 +3,5 @@ requests
 flask_caching
 flask_restx
 beautifulsoup4
+gunicorn
+Werkzeug

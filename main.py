@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from flask_caching import Cache
 from flask_restx import Api, Resource
 from bs4 import BeautifulSoup
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 apikey_geoapify = "49be3a765aa44ec1a02e6baddcaaeb50"
@@ -11,6 +12,8 @@ apikey_nasa = "Ah6cxAedN8mGI9jddu1hhZpLufc036UZE7J6AaBQ"
 
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
 
 DEVELOPMENT_ENV = False
 
