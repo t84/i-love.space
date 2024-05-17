@@ -22,188 +22,229 @@ YYYY_MM_DD = datetime.now().strftime("%Y-%m-%d")
 
 @app.route('/', methods=['GET'])
 def index():
-    user_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-
-    try:
-        cached_iss_response = cache.get('update_iss_response')
-        if cached_iss_response:
-            iss_json = cached_iss_response
-        else:
-            data = requests.get(f"http://ip-api.com/json/{user_ip}", timeout=5).json()
-
-            r = requests.get('https://api.wheretheiss.at/v1/satellites/25544').json()
-
-            headers = {
-                'User-Agent': 'https://i-love.space',
-                'Referer': 'https://i-love.space'
-            }
-
-
-            url = f"https://api.geoapify.com/v1/geocode/reverse?lat={r['latitude']}&lon={r['longitude']}&apiKey={apikey_geoapify}"
-
-            r2 = requests.get(url, headers=headers).json()        
-            print(r2)
-            try:country_name = r2['features'][0]['properties']['name']
-            except:country_name = r2['features'][0]['properties']['country']
-
-            iss_json = {"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}}
-
-
-        return render_template("index.html", 
-                               country=iss_json['data']['country_name'], 
-                               lat=iss_json['data']["coordinates"]['latitude'], 
-                               lon=iss_json['data']["coordinates"]['longitude'], 
-                               ip=user_ip
-                               )
-    
-    except requests.RequestException as e:
-        print(f"Error fetching data: {e}")
-        return "An error occurred while fetching data. Please try again later."
-    
+    return render_template("index.html")
 
 @app.route('/api/iss')
 def iss():
-        cached_iss_response = cache.get('update_iss_response')
-        if cached_iss_response:
+        try:
+            cached_iss_response = cache.get('update_iss_response')
+            if cached_iss_response:
+                r = requests.get('https://api.wheretheiss.at/v1/satellites/25544')
+                if r.status_code == 200:
+                    r = r.json()
+                    cached_iss_response['data']['coordinates']['latitude'] = r['latitude']
+                    cached_iss_response['data']['coordinates']['longitude'] = r['longitude']
+
+                    cache.set('update_iss_response', cached_iss_response, timeout=10)
+
+                    return jsonify(cached_iss_response)
+                else:
+                    return jsonify({"message":"error", "error": "Error with API"})
+
             r = requests.get('https://api.wheretheiss.at/v1/satellites/25544')
             if r.status_code == 200:
+
                 r = r.json()
-                cached_iss_response['data']['coordinates']['latitude'] = r['latitude']
-                cached_iss_response['data']['coordinates']['longitude'] = r['longitude']
 
-                cache.set('update_iss_response', cached_iss_response, timeout=10)
+                headers = {
+                    'User-Agent': 'https://i-love.space',
+                    'Referer': 'https://i-love.space',  
+                }
+                url = f"https://api.geoapify.com/v1/geocode/reverse?lat={r['latitude']}&lon={r['longitude']}&apiKey={apikey_geoapify}"
+                r2 = requests.get(url, headers=headers).json()        
+                try:
+                    country_name = r2['features'][0]['properties']['name']
+                except:
+                    country_name = r2['features'][0]['properties']['country']
 
-                return jsonify(cached_iss_response)
+                response_data = {"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}}
+
+                cache.set('update_iss_response', response_data, timeout=10)
+
+                return jsonify(response_data)
+
             else:
                 return jsonify({"message":"error", "error": "Error with API"})
-        
-        r = requests.get('https://api.wheretheiss.at/v1/satellites/25544')
-        if r.status_code == 200:
-
-            r = r.json()
-
-            headers = {
-                'User-Agent': 'https://i-love.space',
-                'Referer': 'https://i-love.space',  
-            }
-            url = f"https://api.geoapify.com/v1/geocode/reverse?lat={r['latitude']}&lon={r['longitude']}&apiKey={apikey_geoapify}"
-            r2 = requests.get(url, headers=headers).json()        
-            try:
-                country_name = r2['features'][0]['properties']['name']
-            except:
-                country_name = r2['features'][0]['properties']['country']
-
-            response_data = {"data": {"coordinates": {"latitude": r['latitude'], "longitude": r['longitude']}, "country_name": country_name}}
-
-            cache.set('update_iss_response', response_data, timeout=10)
-
-            return jsonify(response_data)
-        
-        else:
-            return jsonify({"message":"error", "error": "Error with API"})
+        except Exception as e:
+            print(e)
+            return jsonify({"message": "error", "error": "Error with API"})
 
 @app.route('/api/peopleinspace', methods=['GET'])
 def peopleinspace():
-        r = requests.get("http://api.open-notify.org/astros.json").json()
+        try:
+            r = requests.get("http://api.open-notify.org/astros.json").json()
 
-        if r["message"] == "success":
-            people = r["people"]
+            if r["message"] == "success":
+                people = r["people"]
 
-            people_list = []
+                people_list = []
 
-            for person in people:
-                person_info = {
-                    "name": person['name'],
-                    "craft": person['craft']
-                }
-                people_list.append(person_info)
+                for person in people:
+                    person_info = {
+                        "name": person['name'],
+                        "craft": person['craft']
+                    }
+                    people_list.append(person_info)
 
-            return jsonify({"message":"success", "people": people_list})
+                return jsonify({"message":"success", "people": people_list})
 
-        else:
-            return jsonify({"message":"error", "error": "Error with API"})
+            else:
+                return jsonify({"message":"error", "error": "Error with API"})
+        except Exception as e:
+            print(e)
+            return jsonify({"message": "error", "error": "Error with API"})
     
 @app.route('/api/apod', methods=['GET'])
 def apod():
-        r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={YYYY_MM_DD}")
-        if r.status_code == 200:
-            json_apod = r.json()
+    try:
+        cached_data = cache.get("apod")
+        today_date = datetime.now().date().isoformat()
 
-            date = json_apod['date']
-            author = json_apod['copyright']
-            title = json_apod['title']
-            description = json_apod['explanation']
-            hdimage = json_apod['hdurl']
-            image = json_apod['url']
-
-            return jsonify({"message":"success", "data": {"date": date, "author": author, "title": title, "description": description, "images": {"hdimage": hdimage, "image": image}}})
+        if cached_data and cached_data.get('date') == today_date:
+            time_until_reset = get_seconds_until_next_day()
+            return jsonify({"message": "success", "data": cached_data, "time_until_reset": time_until_reset})
         else:
-            return jsonify({"message":"error", "error": "Error with API"})
+            r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={today_date}")
+            print(r.status_code)
+            if r.status_code == 200:
+                json_apod = r.json()
+
+                date = json_apod['date']
+                author = json_apod.get('copyright', 'N/A')
+                title = json_apod['title']
+                description = json_apod['explanation']
+                hdimage = json_apod.get('hdurl', '')
+                image = json_apod['url']
+
+                data = {
+                    "date": date,
+                    "author": author,
+                    "title": title,
+                    "description": description,
+                    "images": {
+                        "hdimage": hdimage,
+                        "image": image
+                    }
+                }
+
+                cache.set("apod", data, timeout=get_seconds_until_next_day())
+
+                time_until_reset = get_seconds_until_next_day()
+
+                return jsonify({"message": "success", "data": data, "time_until_reset": time_until_reset})
+            else:
+                return jsonify({"message": "error", "error": "Error with API"})
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "error", "error": "Error with API"})
+        
+
+
+def get_seconds_until_next_day():
+    tomorrow = datetime.now() + timedelta(days=1)
+    midnight = datetime.combine(tomorrow, datetime.min.time())
+    now = datetime.now()
+    return int((midnight - now).total_seconds())
 
 @app.route('/api/solarstorm', methods=['GET'])
 def solarstorm():
-        data = requests.get("https://services.swpc.noaa.gov/products/noaa-scales.json")
+        try:
+            data = requests.get("https://services.swpc.noaa.gov/products/noaa-scales.json")
 
-        if data.status_code == 200:
+            if data.status_code == 200:
 
-            data = data.json()
+                data = data.json()
 
-            solar_storms = []
+                solar_storms = []
 
-            for key, entry in data.items():
-                date_stamp = entry['DateStamp']
-                time_stamp = entry['TimeStamp']
+                for key, entry in data.items():
+                    date_stamp = entry['DateStamp']
+                    time_stamp = entry['TimeStamp']
 
-                if entry['S']['Prob'] is not None:
-                    prob_solar_storm = float(entry['S']['Prob'])
-                    if prob_solar_storm.is_integer():
-                        prob_solar_storm = int(prob_solar_storm)
-                    solar_storms.append({
-                        "date_stamp": date_stamp,
-                        "time_stamp": time_stamp,
-                        "probability": prob_solar_storm
-                    })
-                else:
-                    solar_storms.append({
-                        "date_stamp": date_stamp,
-                        "time_stamp": time_stamp,
-                        "probability": None
-                    })
+                    if entry['S']['Prob'] is not None:
+                        prob_solar_storm = float(entry['S']['Prob'])
+                        if prob_solar_storm.is_integer():
+                            prob_solar_storm = int(prob_solar_storm)
+                        solar_storms.append({
+                            "date_stamp": date_stamp,
+                            "time_stamp": time_stamp,
+                            "probability": prob_solar_storm
+                        })
+                    else:
+                        solar_storms.append({
+                            "date_stamp": date_stamp,
+                            "time_stamp": time_stamp,
+                            "probability": None
+                        })
 
-            return jsonify({"solar_storms": solar_storms})
-        else:
-            return jsonify({"message":"error", "error": "Error with API"})
+                return jsonify({"solar_storms": solar_storms})
+            else:
+                return jsonify({"message":"error", "error": "Error with API"})
+        except Exception as e:
+            print(e)
+            return jsonify({"message": "error", "error": "Error with API"})
 
 @app.route('/api/exoplanets', methods=['GET'])
 def exoplanets():
-        response = requests.get("https://www.openexoplanetcatalogue.com/")
-        if response.status_code == 200:
+        try:
+            response = requests.get("https://www.openexoplanetcatalogue.com/")
+            if response.status_code == 200:
+            
+                soup = BeautifulSoup(response.content, "html.parser")
+
+                table = soup.find("table", {"summary": "Statistics"})
+
+                data = {}
+
+                data = {}
+
+                for row in table.find_all("tr"):
+                    columns = row.find_all(["th", "td"])
+                    key = columns[0].get_text(strip=True)
+                    value = columns[1].get_text(strip=True)
+
+                    # Clean the key
+                    key = key.replace(" ", "_").split("(")[0].strip().casefold()
+
+                    # Exclude the "list_of_contributors" key
+                    if key != "list_of_contributors":
+                        data[key] = value
+
+
+                data["credit"] = "https://www.openexoplanetcatalogue.com/"
+
+                return jsonify(data)
+            else:
+                return jsonify({"message":"error", "error": "Error with API"})
+        except Exception as e:
+            print(e)
+            return jsonify({"message": "error", "error": "Error with API"})
         
-            soup = BeautifulSoup(response.content, "html.parser")
-
-            table = soup.find("table", {"summary": "Statistics"})
-
-            data = {}
-
-            data = {}
-
-            for row in table.find_all("tr"):
-                columns = row.find_all(["th", "td"])
-                key = columns[0].get_text(strip=True)
-                value = columns[1].get_text(strip=True)
-            
-                # Clean the key
-                key = key.replace(" ", "_").split("(")[0].strip().casefold()
-            
-                # Exclude the "list_of_contributors" key
-                if key != "list_of_contributors":
-                    data[key] = value
-
-
-            data["credit"] = "https://www.openexoplanetcatalogue.com/"
-
-            return jsonify(data)
+@app.route('/api/solarsystem', methods=['GET'])
+def solarsystem():
+    try:
+        cached_iss_response = cache.get('solarsystem')
+        if cached_iss_response:
+            return jsonify(cached_iss_response)
         else:
-            return jsonify({"message":"error", "error": "Error with API"})
+            response = requests.get("https://api.le-systeme-solaire.net/rest.php/knowncount?rowData=true")
+            if response.status_code == 200:
+                response_json = response.json()
+                data = [{"id": item[0], "count": item[1], "last_updated": datetime.strptime(item[2], "%d/%m/%Y").strftime("%m/%d/%Y")} for item in response_json["knowncount"]["records"]]
+
+                current_epoch_time = int(datetime.now().timestamp())
+
+                data = {"message": "success", "last_cached": current_epoch_time, "data": data}
+
+                cache.set('solarsystem', data, timeout=3600)
+
+                return jsonify(data)
+            else:
+                return jsonify({"message": "error", "error": "Error with API"})
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "error", "error": "Error with API"})
+
+        
 if __name__ == "__main__":
     app.run(debug=DEVELOPMENT_ENV, port=5000, threaded=True)
