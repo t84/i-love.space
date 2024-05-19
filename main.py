@@ -87,7 +87,7 @@ def apod():
             return jsonify({"message": "success", "data": cached_data, "time_until_reset": time_until_tmr_in_seconds})
         else:
             r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={today_date}")
-            print(r.json())
+            print(r.text)
             if r.status_code == 200:
                 json_apod = r.json()
 
