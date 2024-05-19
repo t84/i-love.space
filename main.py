@@ -114,7 +114,7 @@ def apod():
 
                 return jsonify({"message": "success", "data": data, "time_until_reset": time_until_tmr_in_seconds})
             else:
-                return jsonify({"message": "error", "error": "Error with API1"})
+                return jsonify({"message": "error", "error": f"Error with API1 {r}"})
     except Exception as e:
         print(e)
         return jsonify({"message": "error", "error": "Error with API2"})
