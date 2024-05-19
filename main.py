@@ -4,11 +4,6 @@ from datetime import datetime, timedelta
 from flask_caching import Cache
 from bs4 import BeautifulSoup
 
-tomorrow = datetime.now() + timedelta(days=1)  
-midnight = datetime.combine(tomorrow, datetime.min.time())
-now = datetime.now()
-time_until_tmr_in_seconds = int((midnight - now).total_seconds())
-
 
 apikey_geoapify = "49be3a765aa44ec1a02e6baddcaaeb50"
 apikey_nasa = "Ah6cxAedN8mGI9jddu1hhZpLufc036UZE7J6AaBQ"
@@ -79,6 +74,12 @@ def iss():
 @app.route('/api/apod', methods=['GET'])
 def apod():
     try:
+        tomorrow = datetime.now() + timedelta(days=1)  
+        midnight = datetime.combine(tomorrow, datetime.min.time())
+        now = datetime.now()
+        time_until_tmr_in_seconds = int((midnight - now).total_seconds())
+
+        
         cached_data = cache.get("apod")
         today_date = datetime.now().date().isoformat()
 
