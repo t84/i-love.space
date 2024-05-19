@@ -69,31 +69,13 @@ def iss():
             print(e)
             return jsonify({"message": "error", "error": "Error with API"})
 
-@app.route('/api/peopleinspace', methods=['GET'])
-def peopleinspace():
-        try:
-            r = requests.get("http://api.open-notify.org/astros.json").json()
 
-            if r["message"] == "success":
-                people = r["people"]
+def get_seconds_until_next_day():
+    tomorrow = datetime.now() + timedelta(days=1)  
+    midnight = datetime.combine(tomorrow, datetime.min.time())
+    now = datetime.now()
+    return int((midnight - now).total_seconds())
 
-                people_list = []
-
-                for person in people:
-                    person_info = {
-                        "name": person['name'],
-                        "craft": person['craft']
-                    }
-                    people_list.append(person_info)
-
-                return jsonify({"message":"success", "people": people_list})
-
-            else:
-                return jsonify({"message":"error", "error": "Error with API"})
-        except Exception as e:
-            print(e)
-            return jsonify({"message": "error", "error": "Error with API"})
-    
 @app.route('/api/apod', methods=['GET'])
 def apod():
     try:
@@ -137,52 +119,75 @@ def apod():
     except Exception as e:
         print(e)
         return jsonify({"message": "error", "error": "Error with API"})
-        
 
-
-def get_seconds_until_next_day():
-    tomorrow = datetime.now() + timedelta(days=1)
-    midnight = datetime.combine(tomorrow, datetime.min.time())
-    now = datetime.now()
-    return int((midnight - now).total_seconds())
-
-@app.route('/api/solarstorm', methods=['GET'])
-def solarstorm():
+@app.route('/api/peopleinspace', methods=['GET'])
+def peopleinspace():
         try:
-            data = requests.get("https://services.swpc.noaa.gov/products/noaa-scales.json")
-
-            if data.status_code == 200:
-
-                data = data.json()
-
-                solar_storms = []
-
-                for key, entry in data.items():
-                    date_stamp = entry['DateStamp']
-                    time_stamp = entry['TimeStamp']
-
-                    if entry['S']['Prob'] is not None:
-                        prob_solar_storm = float(entry['S']['Prob'])
-                        if prob_solar_storm.is_integer():
-                            prob_solar_storm = int(prob_solar_storm)
-                        solar_storms.append({
-                            "date_stamp": date_stamp,
-                            "time_stamp": time_stamp,
-                            "probability": prob_solar_storm
-                        })
-                    else:
-                        solar_storms.append({
-                            "date_stamp": date_stamp,
-                            "time_stamp": time_stamp,
-                            "probability": None
-                        })
-
-                return jsonify({"solar_storms": solar_storms})
+            cached_peopleinspace_response = cache.get('peopleinspace')
+            if cached_peopleinspace_response:
+                return cached_peopleinspace_response
             else:
-                return jsonify({"message":"error", "error": "Error with API"})
+                r = requests.get("http://api.open-notify.org/astros.json").json()
+
+                if r["message"] == "success":
+                    people = r["people"]
+
+                    people_list = []
+
+                    for person in people:
+                        person_info = {
+                            "name": person['name'],
+                            "craft": person['craft']
+                        }
+                        people_list.append(person_info)
+
+                    cache.set("peopleinspace", {"message":"success", "people": people_list}, timeout=1800)
+
+                    return jsonify({"message":"success", "people": people_list})
+
+                else:
+                    return jsonify({"message":"error", "error": "Error with API"})
         except Exception as e:
             print(e)
             return jsonify({"message": "error", "error": "Error with API"})
+
+#@app.route('/api/solarstorm', methods=['GET'])
+#def solarstorm():
+#        try:
+#            data = requests.get("https://services.swpc.noaa.gov/products/noaa-scales.json")
+#
+#            if data.status_code == 200:
+#
+#                data = data.json()
+#
+#                solar_storms = []
+#
+#                for key, entry in data.items():
+#                    date_stamp = entry['DateStamp']
+#                    time_stamp = entry['TimeStamp']
+#
+#                    if entry['S']['Prob'] is not None:
+#                        prob_solar_storm = float(entry['S']['Prob'])
+#                        if prob_solar_storm.is_integer():
+#                            prob_solar_storm = int(prob_solar_storm)
+#                        solar_storms.append({
+#                            "date_stamp": date_stamp,
+#                            "time_stamp": time_stamp,
+#                            "probability": prob_solar_storm
+#                        })
+#                    else:
+#                        solar_storms.append({
+#                            "date_stamp": date_stamp,
+#                            "time_stamp": time_stamp,
+#                            "probability": None
+#                        })
+#
+#                return jsonify({"message":"success", "solar_storms": solar_storms})
+#            else:
+#                return jsonify({"message":"error", "error": "Error with API"})
+#        except Exception as e:
+#            print(e)
+#            return jsonify({"message": "error", "error": "Error with API"})
 
 @app.route('/api/exoplanets', methods=['GET'])
 def exoplanets():
@@ -213,7 +218,7 @@ def exoplanets():
 
                 data["credit"] = "https://www.openexoplanetcatalogue.com/"
 
-                return jsonify(data)
+                return jsonify({"message": "success", "data": data})
             else:
                 return jsonify({"message":"error", "error": "Error with API"})
         except Exception as e:

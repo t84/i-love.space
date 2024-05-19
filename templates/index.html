@@ -7,29 +7,170 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
-    <h1>Hello Space lover!</h1>
-    <h1>ISS Location</h1>
-    <h3 id="current-coordinates">Loading iss location stats...</h3>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/P9C25Un7xaM" frameborder="0" allowfullscreen></iframe>
+    <div class="container">
+        <h1>Hello Space lover!</h1>
+        <h1>ISS Location</h1>
+        <h3 id="current-coordinates">Loading iss location stats...</h3>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/P9C25Un7xaM" frameborder="0" allowfullscreen></iframe>
+        <br>
+    </div>
+    
+    <div class="container">
+        <h1>Astronomy Picture of the Day</h1>
+        <img id="apod-image" src="" style="width: 250px; height: 250px;">
+        <h3 id="apod-text"></h3>
+        <h4 id="apod-text2"></h4>
+        <br>
+    </div>
+
+    <div class="container">
+        <h1>People in Space</h1>
+        <h3 id="peopleinspace"></h3>
+    </div>
+
+    <div class="container">
+        <h1>Exo Planet Data</h1>
+        <h3 id="exoplanets"></h3>
+    </div>
+
+    <div class="container">
+        <h1>Solar System Data</h1>
+        <h3 id="solarsystem"></h3>
+    </div>
+
+
+    
+    <div class="container">
+        <p><em>More coming soon!</em></p>
+    </div>
+
     <script>
         function updatedata() {
-            $.get('/api/iss', function(data) {
+            $.get('/api/iss', { _: new Date().getTime() }, function(data) {
                 $('#current-coordinates').text("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
-                
                 console.log("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
             });
         }
 
+        function updateapod() {
+            $.get('/api/apod', { _: new Date().getTime() }, function(data) {
+                console.log("APOD Data Received:", data);  // Log the entire response
+                if (data.data.images && data.data.images.hdimage) {
+                    $('#apod-image').attr('src', data.data.images.hdimage);
+                } else {
+                    console.error("APOD image URL is missing in the response");
+                }
+
+                if (data.data.description) {
+                    $('#apod-text').text(data.data.title + ' - ' + data.data.author + ' - ' + data.data.date);
+                    $('#apod-text2').text(data.data.description);
+                } else {
+                    console.error("APOD description is missing in the response");
+                }
+
+                if (data.time_until_reset) {
+                    console.log("Seconds until next day:", data.time_until_reset);
+                    setTimeout(updateapod, data.time_until_reset * 1000);
+                }
+            });
+        }
+        function updatepeopleinspace() {
+            $.get({
+                url: '/api/peopleinspace',
+                data: { _: new Date().getTime() },
+                success: function(response) {
+                    if (response.message === 'success' && response.people) {
+                        let content = ''; // Initialize an empty string to hold the content
+                        for (let person of response.people) {
+                            content += `Name: ${person.name}, Spacecraft: ${person.craft}<br>`; // Append each entry with a new line
+                        }
+                        $('#peopleinspace').html(content); // Update the content of the h3 element
+                    } else {
+                        console.error('Failed to get people in space data.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        }
+
+        function updateExoplanetData() {
+            $.get({
+                url: '/api/exoplanets',
+                data: { _: new Date().getTime() },
+                success: function(response) {
+                    if (response.message === 'success' && response.data) {
+                        let content = ''; // Initialize an empty string to hold the content
+                        const data = response.data;
+                        console.log(data)
+                        content += `Credit: <a href="${data.credit}">${data.credit}</a><br>`;
+                        content += `Last Update: ${data.last_update}<br>`;
+                        content += `Number of Binary Systems: ${data.number_of_binary_systems}<br>`;
+                        content += `Number of Commits: ${data.number_of_commits}<br>`;
+                        content += `Number of Confirmed Exoplanets: ${data.number_of_confirmed_exoplanets}<br>`;
+                        content += `Number of Planetary Systems: ${data.number_of_planetary_systems}<br>`;
+                        content += `Total Number of Planets: ${data.total_number_of_planets_}<br>`;
+                    
+                        $('#exoplanets').html(content); // Update the content of the h3 element
+                    } else {
+                        console.error('Failed to get exoplanet data.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
+        }
+
+        function updateSolarSystemData() {
+              $.get({
+                url: '/api/solarsystem',
+                success: function(response) {
+                  if (response.message === 'success') {
+                    var data = response.data;
+                    var solarsystemHTML = '';
+                
+                    for (var i = 0; i < data.length; i++) {
+                      var planet = data[i];
+                      var planetId = planet.id;
+                      var planetName = planetId.charAt(0).toUpperCase() + planetId.slice(1);
+                      var count = planet.count;
+                      var lastUpdated = new Date(planet.last_updated);
+                    
+                      solarsystemHTML += '<div>ID: ' + planetName + ', Count: ' + count + ', Last Updated: ' + lastUpdated.toLocaleDateString() + '</div>';
+                    }
+                
+                    $('#solarsystem').html(solarsystemHTML);
+                  } else {
+                    console.error('Error: ' + response.message);
+                  }
+                },
+                error: function(xhr, status, error) {
+                  console.error('Error fetching data:', error);
+                }
+              });
+            }
+
+
+        updateSolarSystemData();
+        updateExoplanetData();
+        updatepeopleinspace();
+        updatedata();
+        updateapod();
+
         setInterval(updatedata, 1000);
-
     </script>
-    <p><em>More coming soon!</em></p>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
         body, h1, h3, p, em {
             font-family: 'Roboto', sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     </style>
 </body>
