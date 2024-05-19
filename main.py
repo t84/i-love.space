@@ -87,7 +87,7 @@ def apod():
             return jsonify({"message": "success", "data": cached_data, "time_until_reset": time_until_tmr_in_seconds})
         else:
             r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={today_date}")
-            print(r)
+            print(r.json())
             if r.status_code == 200:
                 json_apod = r.json()
 
@@ -113,10 +113,10 @@ def apod():
 
                 return jsonify({"message": "success", "data": data, "time_until_reset": time_until_tmr_in_seconds})
             else:
-                return jsonify({"message": "error", "error": f"Error with API1 {r}"})
+                return jsonify({"message": "error", "error": f"Error with API"})
     except Exception as e:
         print(e)
-        return jsonify({"message": "error", "error": "Error with API2"})
+        return jsonify({"message": "error", "error": "Error with API"})
 
 @app.route('/api/peopleinspace', methods=['GET'])
 def peopleinspace():
