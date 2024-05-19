@@ -79,7 +79,7 @@ def apod():
         now = datetime.now()
         time_until_tmr_in_seconds = int((midnight - now).total_seconds())
 
-        
+
         cached_data = cache.get("apod")
         today_date = datetime.now().date().isoformat()
 
@@ -114,10 +114,10 @@ def apod():
 
                 return jsonify({"message": "success", "data": data, "time_until_reset": time_until_tmr_in_seconds})
             else:
-                return jsonify({"message": "error", "error": "Error with API"})
+                return jsonify({"message": "error", "error": "Error with API1"})
     except Exception as e:
         print(e)
-        return jsonify({"message": "error", "error": "Error with API"})
+        return jsonify({"message": "error", "error": "Error with API2"})
 
 @app.route('/api/peopleinspace', methods=['GET'])
 def peopleinspace():
