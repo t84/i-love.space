@@ -17,12 +17,15 @@
     
     <div class="container">
         <h1>Astronomy Picture of the Day</h1>
-        <img id="apod-image" src="" style="width: 250px; height: 250px;">
+        <img id="apod-image" src="" style="width: 250px; height: 250px; display: none;">
+        <video id="apod-video" src="" style="display: none;" controls></video>
+        <iframe id="youtube-embed" src="" style="display: none;" width="560" height="315" frameborder="0" allowfullscreen></iframe>
         <h3 id="apod-text"></h3>
         <h4 id="apod-text2"></h4>
         <h4><em><a href="https://apod.nasa.gov/apod/lib/apsubmit2015.html">Submit your own APOD images here!</a></em></h4>
         <br>
     </div>
+     
 
     <div class="container">
         <h1>People in Space</h1>
@@ -49,27 +52,47 @@
         function updateiss() {
             $.get('/api/iss', { _: new Date().getTime() }, function(data) {
                 $('#current-coordinates').text("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
-                console.log("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
+                //console.log("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
             });
         }
 
         function updateapod() {
             $.get('/api/apod', { _: new Date().getTime() }, function(data) {
                 console.log("APOD Data Received:", data);  // Log the entire response
+            
                 if (data.data.images && data.data.images.hdimage) {
-                    $('#apod-image').attr('src', data.data.images.hdimage);
+                    $('#apod-image').attr('src', data.data.images.hdimage).show();
+                    $('#apod-video').hide();
+                    $('#youtube-embed').hide();
+                } else if (data.data.video) {
+                    const videoUrl = data.data.video.url;
+                    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+                
+                    if (youtubeRegex.test(videoUrl)) {
+                        $('#youtube-embed').attr('src', videoUrl).show();
+                        $('#apod-video').hide();
+                    } else {
+                        $('#apod-video').attr('src', videoUrl).show();
+                        $('#youtube-embed').hide();
+                    }
+                    $('#apod-image').hide();
                 } else {
-                    console.error("APOD image URL is missing in the response");
+                    $('#apod-image').hide();
+                    $('#apod-video').hide();
+                    $('#youtube-embed').hide();
                 }
-
+            
                 if (data.data.description) {
                     $('#apod-text').text(data.data.title + ' - ' + data.data.author + ' - ' + data.data.date);
                     $('#apod-text2').text(data.data.description);
                 } else {
                     console.error("APOD description is missing in the response");
                 }
+            }).fail(function() {
+                console.error("Failed to fetch APOD data");
             });
         }
+
         function updatepeopleinspace() {
             $.get({
                 url: '/api/peopleinspace',

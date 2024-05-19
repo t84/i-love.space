@@ -74,70 +74,56 @@ def iss():
 @app.route('/api/apod', methods=['GET'])
 def apod():
     try:
-        today_date = datetime.now().date().isoformat()
 
         cached_data = cache.get("apod")
+
         if cached_data:
             return jsonify({"message": "success", "data": cached_data})
         else:
-            r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={today_date}")
+            r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}")
+            print(r.text)
             if r.status_code == 200:
                 json_apod = r.json()
 
                 date = json_apod['date']
                 author = json_apod.get('copyright', 'N/A')
                 title = json_apod['title']
+                media_type = json_apod['media_type']
                 description = json_apod['explanation']
-                hdimage = json_apod['hdurl']
                 image = json_apod['url']
 
-                data = {
-                    "date": date,
-                    "author": author,
-                    "title": title,
-                    "description": description,
-                    "images": {
-                        "hdimage": hdimage,
-                        "image": image
-                    }
-                }
+                if media_type == "image":
 
-                cache.set("apod", data, timeout=3600)
+                    hdimage = json_apod['hdurl']
 
-                return jsonify({"message": "success", "data": data})
-            elif "No data available for date" in r.json().get('msg', ''):
-                yesterday = datetime.now() - timedelta(days=1)  
-                yesterday_date = yesterday.date().isoformat()
-                r_yesterday = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={yesterday_date}")
-
-                if r_yesterday.status_code == 200:
-                    json_apod_yesterday = r_yesterday.json()
-
-                    date_yesterday = json_apod_yesterday['date']
-                    author_yesterday = json_apod_yesterday.get('copyright', 'N/A')
-                    title_yesterday = json_apod_yesterday['title']
-                    description_yesterday = json_apod_yesterday['explanation']
-                    hdimage_yesterday = json_apod_yesterday['hdurl']
-                    image_yesterday = json_apod_yesterday['url']
-
-                    data_yesterday = {
-                        "date": date_yesterday,
-                        "author": author_yesterday,
-                        "title": title_yesterday,
-                        "description": description_yesterday,
+                    data = {
+                        "date": date,
+                        "author": author,
+                        "title": title,
+                        "media_type": media_type,
+                        "description": description,
                         "images": {
-                            "hdimage": hdimage_yesterday,
-                            "image": image_yesterday
+                            "hdimage": hdimage,
+                            "image": image
+                        }
+                    }
+                elif media_type == "video":
+                    data = {
+                        "date": date,
+                        "author": author,
+                        "title": title,
+                        "media_type": media_type,
+                        "description": description,
+                        "video": {
+                            "url": image
                         }
                     }
 
-                    cache.set("apod", data_yesterday, timeout=3600)
+                cache.set("apod", data, timeout=600)
 
-                    return jsonify({"message": "success", "data": data_yesterday})
-                else:
-                    return jsonify({"message": "error", "error": "Error fetching APOD data for yesterday"})
+                return jsonify({"message": "success", "data": data})
             else:
-                return jsonify({"message": "error", "error": f"Error with API: {r.json()}"})
+                return jsonify({"message": "error", "error": f"Error with API"})
     except Exception as e:
         print(e)
         return jsonify({"message": "error", "error": "Error with API"})
