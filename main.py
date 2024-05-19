@@ -83,9 +83,8 @@ def apod():
         cached_data = cache.get("apod")
         today_date = datetime.now().date().isoformat()
 
-        if cached_data and cached_data.get('date') == today_date:
-            time_until_reset = time_until_tmr_in_seconds
-            return jsonify({"message": "success", "data": cached_data, "time_until_reset": time_until_reset})
+        if cached_data:
+            return jsonify({"message": "success", "data": cached_data, "time_until_reset": time_until_tmr_in_seconds})
         else:
             r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={today_date}")
             print(r)
@@ -96,7 +95,7 @@ def apod():
                 author = json_apod.get('copyright', 'N/A')
                 title = json_apod['title']
                 description = json_apod['explanation']
-                hdimage = json_apod.get('hdurl', '')
+                hdimage = json_apod['hdurl']
                 image = json_apod['url']
 
                 data = {
