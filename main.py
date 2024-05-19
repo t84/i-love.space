@@ -137,7 +137,7 @@ def apod():
                 else:
                     return jsonify({"message": "error", "error": "Error fetching APOD data for yesterday"})
             else:
-                return jsonify({"message": "error", "error": f"Error with API: {r.status_code}"})
+                return jsonify({"message": "error", "error": f"Error with API: {r.json()}"})
     except Exception as e:
         print(e)
         return jsonify({"message": "error", "error": "Error with API"})
