@@ -45,7 +45,7 @@
     </div>
 
     <script>
-        function updatedata() {
+        function updateiss() {
             $.get('/api/iss', { _: new Date().getTime() }, function(data) {
                 $('#current-coordinates').text("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
                 console.log("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
@@ -66,11 +66,6 @@
                     $('#apod-text2').text(data.data.description);
                 } else {
                     console.error("APOD description is missing in the response");
-                }
-
-                if (data.time_until_reset) {
-                    console.log("Seconds until next day:", data.time_until_reset);
-                    setTimeout(updateapod, data.time_until_reset * 1000);
                 }
             });
         }
@@ -156,10 +151,9 @@
         updateSolarSystemData();
         updateExoplanetData();
         updatepeopleinspace();
-        updatedata();
-        updateapod();
+        setinverval(updateapod, 1800);
 
-        setInterval(updatedata, 1000);
+        setInterval(updateiss, 1000);
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');

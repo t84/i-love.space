@@ -74,21 +74,13 @@ def iss():
 @app.route('/api/apod', methods=['GET'])
 def apod():
     try:
-        tomorrow = datetime.now() + timedelta(days=1)  
-        midnight = datetime.combine(tomorrow, datetime.min.time())
-        now = datetime.now()
-        time_until_tmr_in_seconds = int((midnight - now).total_seconds())
-
-
-        cached_data = cache.get("apod")
         today_date = datetime.now().date().isoformat()
 
+        cached_data = cache.get("apod")
         if cached_data:
-            return jsonify({"message": "success", "data": cached_data, "time_until_reset": time_until_tmr_in_seconds})
+            return jsonify({"message": "success", "data": cached_data})
         else:
-            print(today_date)
             r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={today_date}")
-            print(r.text)
             if r.status_code == 200:
                 json_apod = r.json()
 
@@ -110,11 +102,42 @@ def apod():
                     }
                 }
 
-                cache.set("apod", data, timeout=time_until_tmr_in_seconds)
+                cache.set("apod", data, timeout=3600)
 
-                return jsonify({"message": "success", "data": data, "time_until_reset": time_until_tmr_in_seconds})
+                return jsonify({"message": "success", "data": data})
+            elif r.status_code == 404 and "No APOD data available for date" in r.json().get('msg', ''):
+                yesterday = datetime.now() - timedelta(days=1)  
+                yesterday_date = yesterday.date().isoformat()
+                r_yesterday = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={yesterday_date}")
+
+                if r_yesterday.status_code == 200:
+                    json_apod_yesterday = r_yesterday.json()
+
+                    date_yesterday = json_apod_yesterday['date']
+                    author_yesterday = json_apod_yesterday.get('copyright', 'N/A')
+                    title_yesterday = json_apod_yesterday['title']
+                    description_yesterday = json_apod_yesterday['explanation']
+                    hdimage_yesterday = json_apod_yesterday['hdurl']
+                    image_yesterday = json_apod_yesterday['url']
+
+                    data_yesterday = {
+                        "date": date_yesterday,
+                        "author": author_yesterday,
+                        "title": title_yesterday,
+                        "description": description_yesterday,
+                        "images": {
+                            "hdimage": hdimage_yesterday,
+                            "image": image_yesterday
+                        }
+                    }
+
+                    cache.set("apod", data_yesterday, timeout=3600)
+
+                    return jsonify({"message": "success", "data": data_yesterday})
+                else:
+                    return jsonify({"message": "error", "error": "Error fetching APOD data for yesterday"})
             else:
-                return jsonify({"message": "error", "error": f"Error with API"})
+                return jsonify({"message": "error", "error": f"Error with API: {r.status_code}"})
     except Exception as e:
         print(e)
         return jsonify({"message": "error", "error": "Error with API"})
