@@ -4,6 +4,11 @@ from datetime import datetime, timedelta
 from flask_caching import Cache
 from bs4 import BeautifulSoup
 
+tomorrow = datetime.now() + timedelta(days=1)  
+midnight = datetime.combine(tomorrow, datetime.min.time())
+now = datetime.now()
+time_until_tmr_in_seconds = int((midnight - now).total_seconds())
+
 
 apikey_geoapify = "49be3a765aa44ec1a02e6baddcaaeb50"
 apikey_nasa = "Ah6cxAedN8mGI9jddu1hhZpLufc036UZE7J6AaBQ"
@@ -70,11 +75,6 @@ def iss():
             return jsonify({"message": "error", "error": "Error with API"})
 
 
-def get_seconds_until_next_day():
-    tomorrow = datetime.now() + timedelta(days=1)  
-    midnight = datetime.combine(tomorrow, datetime.min.time())
-    now = datetime.now()
-    return int((midnight - now).total_seconds())
 
 @app.route('/api/apod', methods=['GET'])
 def apod():
@@ -83,7 +83,7 @@ def apod():
         today_date = datetime.now().date().isoformat()
 
         if cached_data and cached_data.get('date') == today_date:
-            time_until_reset = get_seconds_until_next_day()
+            time_until_reset = time_until_tmr_in_seconds
             return jsonify({"message": "success", "data": cached_data, "time_until_reset": time_until_reset})
         else:
             r = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={today_date}")
@@ -109,11 +109,9 @@ def apod():
                     }
                 }
 
-                cache.set("apod", data, timeout=get_seconds_until_next_day())
+                cache.set("apod", data, timeout=time_until_tmr_in_seconds)
 
-                time_until_reset = get_seconds_until_next_day()
-
-                return jsonify({"message": "success", "data": data, "time_until_reset": time_until_reset})
+                return jsonify({"message": "success", "data": data, "time_until_reset": time_until_tmr_in_seconds})
             else:
                 return jsonify({"message": "error", "error": "Error with API"})
     except Exception as e:
