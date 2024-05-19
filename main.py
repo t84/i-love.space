@@ -105,7 +105,7 @@ def apod():
                 cache.set("apod", data, timeout=3600)
 
                 return jsonify({"message": "success", "data": data})
-            elif "No APOD data available for date" in r.json().get('msg', ''):
+            elif "No data available for date" in r.json().get('msg', ''):
                 yesterday = datetime.now() - timedelta(days=1)  
                 yesterday_date = yesterday.date().isoformat()
                 r_yesterday = requests.get(f"https://api.nasa.gov/planetary/apod?api_key={apikey_nasa}&date={yesterday_date}")
