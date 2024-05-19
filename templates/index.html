@@ -20,6 +20,7 @@
         <img id="apod-image" src="" style="width: 250px; height: 250px;">
         <h3 id="apod-text"></h3>
         <h4 id="apod-text2"></h4>
+        <h4><em><a href="https://apod.nasa.gov/apod/lib/apsubmit2015.html">Submit your own APOD images here!</a></em></h4>
         <br>
     </div>
 
@@ -36,7 +37,6 @@
     <div class="container">
         <h1>Solar System Data</h1>
         <h3 id="solarsystem"></h3>
-        <h4><em><a href="https://apod.nasa.gov/apod/lib/apsubmit2015.html">Submit your own APOD images here!</a></em></h4>
     </div>
 
 
@@ -152,8 +152,9 @@
         updateSolarSystemData();
         updateExoplanetData();
         updatepeopleinspace();
-        setInverval(updateapod, 1800);
-
+        updateapod();
+        
+        setInterval(updateapod, 1800000);
         setInterval(updateiss, 1000);
     </script>
     <style>
