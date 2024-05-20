@@ -1,0 +1,80 @@
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-506b70b4e501b5fb3e32d497b0cc0946.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-682e8ea9f65056c96e588e1415eff994.woff) format('woff');
+	font-weight: 100;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-d43fe81943b6cdf18b03494f922c9b38.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-467bfadf5fb468b057fa5ef9621344e7.woff) format('woff');
+	font-weight: 100;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-47ef38d922b5d51f7727e3489abd9b62.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-b81f1778fdb6d260e34644c27a5f683d.woff) format('woff');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-e93e6539b6de468ab02110d92bb8600f.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-d3b3b5800d0a47028e3d645c3d4f5a60.woff) format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-981f30889de0a75521cb00f912973066.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-1b556a0ac5ce0127a4093a82893b141d.woff) format('woff');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-1f29821e295a7a7162f9c507a2eacb71.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-4a095a97f130b45b927399dd0a5921b6.woff) format('woff');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-d009a37e6c6c49597e51ddf3dcf312bc.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-64e8393952922b97d67bb81452f8ca6b.woff) format('woff');
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-500c8ef816e01d522a048352dd5a3264.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-37f8c2bd8e013e23f5239a18a02fd00f.woff) format('woff');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFRounded';
+	src: url(../../assets/fonts/SFRounded-966b02ea86ed405c3ec958fb0deb41b9.woff2) format('woff2'),
+	url(../../assets/fonts/SFRounded-354c58bf8113dead6c4571f262bcab99.woff) format('woff');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}

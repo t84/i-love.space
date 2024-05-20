@@ -1,0 +1,17 @@
+@font-face {
+	font-family: 'SF Pro';
+	src: url(../../assets/fonts/SF%20Pro-d76b5012e128b769de94beb2986e4314.woff2) format('woff2'),
+	url(../../assets/fonts/SF%20Pro-2385f3868de6a23f5b96b872739f02e0.woff) format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SF Pro';
+	src: url(../../assets/fonts/SF%20Pro-54eb1bd250a5a5ce44f62f99067e3f83.woff2) format('woff2'),
+	url(../../assets/fonts/SF%20Pro-d0abf3c07c48901856ed2c1f10348e4a.woff) format('woff');
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}

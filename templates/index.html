@@ -1,97 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-bs-theme="light" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>I-love.space</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <meta name="description" content="Welcome to I-love.space, My goal with this website was to bring some of the space data i enjoyed looking at all into one place with an api for everyone to use and enjoy.
+
+">
+    <meta name="og:url" content="https://i-love.space">
+    <meta name="og:title" content="I-love.space">
+    <meta name="og:image" content="">
+    <meta name="og:description" content="Welcome to I-love.space, My goal with this website was to bring some of the space data i enjoyed looking at all into one place with an api for everyone to use and enjoy.">
+    <meta name="theme-color" content="#000">
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "WebSite",
+            "name": "I-love.space",
+            "url": "https://I-love.space"
+        }
+    </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <link rel="icon" type="image/png" sizes="2000x2000" href="{{ url_for('static', filename='assets/img/comet-white.png') }}">
+    <link rel="icon" type="image/png" sizes="2000x2000" href="{{ url_for('static', filename='assets/img/comet-white.png') }}" media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/png" sizes="2000x2000" href="{{ url_for('static', filename='assets/img/comet-white.png') }}">
+    <link rel="icon" type="image/png" sizes="2000x2000" href="{{ url_for('static', filename='assets/img/comet-white.png') }}" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/SF-Pro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/SFProDisplay.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/SFProText.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/SFRounded.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/Navbar-Centered-Links-icons.css') }}">
 </head>
-<body>
-    <div class="container">
-        <h1>Hello Space lover!</h1>
-        <h1>ISS Location</h1>
-        <h3 id="current-coordinates">Loading iss location stats...</h3>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/P9C25Un7xaM" frameborder="0" allowfullscreen></iframe>
-        <br>
-    </div>
-    
-    <div class="container">
-        <h1>Astronomy Picture of the Day</h1>
-        <img id="apod-image" src="" style="width: 250px; height: 250px; display: none;">
-        <video id="apod-video" src="" style="display: none;" controls></video>
-        <iframe id="youtube-embed" src="" style="display: none;" width="560" height="315" frameborder="0" allowfullscreen></iframe>
-        <h3 id="apod-text"></h3>
-        <h4 id="apod-text2"></h4>
-        <h4><em><a href="https://apod.nasa.gov/apod/lib/apsubmit2015.html">Submit your own APOD images here!</a></em></h4>
-        <br>
-    </div>
-     
 
-    <div class="container">
-        <h1>People in Space</h1>
+<body style="background: #000000; margin: 0; padding: 0; overflow-x: hidden;">
+    <canvas id="backgroundCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></canvas>
+    <nav class="navbar navbar-expand-md py-3">
+        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><img src="{{ url_for('static', filename='assets/img/comet-white.png') }}" width="32px" style="font-size: 32px;"><span style="color: #f0eeed;font-size: 32px;font-family: SFProDisplay;font-weight: bold;">Space API</span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-3"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-3">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"></li>
+                    <li class="nav-item"></li>
+                    <li class="nav-item"></li>
+                </ul><a href="#" style="padding-right: 5px;color: #f0eeed;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-8 0 512 512" width="1em" height="1em" fill="currentColor" style="font-size: 32px;">
+                        <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                        <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path>
+                    </svg></a><a href="#" style="color: #f0eeed;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-64 0 512 512" width="1em" height="1em" fill="currentColor" style="font-size: 32px;">
+                        <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                        <path d="M111.4 295.9c-3.5 19.2-17.4 108.7-21.5 134-.3 1.8-1 2.5-3 2.5H12.3c-7.6 0-13.1-6.6-12.1-13.9L58.8 46.6c1.5-9.6 10.1-16.9 20-16.9 152.3 0 165.1-3.7 204 11.4 60.1 23.3 65.6 79.5 44 140.3-21.5 62.6-72.5 89.5-140.1 90.3-43.4.7-69.5-7-75.3 24.2zM357.1 152c-1.8-1.3-2.5-1.8-3 1.3-2 11.4-5.1 22.5-8.8 33.6-39.9 113.8-150.5 103.9-204.5 103.9-6.1 0-10.1 3.3-10.9 9.4-22.6 140.4-27.1 169.7-27.1 169.7-1 7.1 3.5 12.9 10.6 12.9h63.5c8.6 0 15.7-6.3 17.4-14.9.7-5.4-1.1 6.1 14.4-91.3 4.6-22 14.3-19.7 29.3-19.7 71 0 126.4-28.8 142.9-112.3 6.5-34.8 4.6-71.4-23.8-92.6z"></path>
+                    </svg></a>
+            </div>
+        </div>
+    </nav>
+    <section>
+        <div style="height: 15vh;"></div>
+        <div class="d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;">
+            <h1 style="font-size: 64px;font-family: SFProDisplay;font-weight: bold;color: #f0eeed;">Welcome, Space lover.</h1>
+        </div>
+        <p class="text-center" style="color: rgb(255,255,255);max-width: 600px;margin: 0px auto;">Welcome to I-love.space, My goal with this website was to bring some of the space data i enjoyed looking at all into one place with an api for everyone to use and enjoy.</p>
+        <div style="height: 10vh;"></div>
+        <div class="text-center" style="height: 25vh;"><img class="rounded-circle" src="{{ url_for('static', filename='assets/img/Earth_with_rounded_corners.gif') }}"></div>
+    </section>
+    <div style="height: 50vh;"></div>
+    <section style="height: auto;">
+        <div class="d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;">
+            <h1 class="text-center" style="font-size: 64px;font-family: SFProDisplay;font-weight: bold;color: #f0eeed;"><img src="{{ url_for('static', filename='assets/img/planet-moon.png') }}" style="width: 64px;padding-bottom: 15px;">&nbsp;Current ISS location.</h1>
+        </div>
+        <div style="height: 5%;"></div>
+        <div class="text-center d-flex d-lg-flex flex-column align-items-lg-center">
+            <p style="color: #f0eeed;font-size: 24px;font-weight: bold;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 0 512 512" width="1em" height="1em" fill="currentColor" style="margin-bottom: 5px;">
+                    <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                    <path d="M429.6 92.1c4.9-11.9 2.1-25.6-7-34.7s-22.8-11.9-34.7-7l-352 144c-14.2 5.8-22.2 20.8-19.3 35.8s16.1 25.8 31.4 25.8H224V432c0 15.3 10.8 28.4 25.8 31.4s30-5.1 35.8-19.3l144-352z"></path>
+                </svg>
+                <span id="longitude">Loading Longitude...</span>
+            </p>
+            <p style="color: #f0eeed;font-size: 24px;font-weight: bold;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-32 0 512 512" width="1em" height="1em" fill="currentColor" style="margin-bottom: 5px;">
+                    <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                    <path d="M429.6 92.1c4.9-11.9 2.1-25.6-7-34.7s-22.8-11.9-34.7-7l-352 144c-14.2 5.8-22.2 20.8-19.3 35.8s16.1 25.8 31.4 25.8H224V432c0 15.3 10.8 28.4 25.8 31.4s30-5.1 35.8-19.3l144-352z"></path>
+                </svg>
+                <span id="latitude">Loading Latitude... </span>
+            </p>
+            <p style="color: #f0eeed;font-size: 24px;font-weight: bold;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -32 576 576" width="1em" height="1em" fill="currentColor" style="margin-bottom: 5px;">
+                    <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. -->
+                    <path d="M384 476.1L192 421.2V35.9L384 90.8V476.1zm32-1.2V88.4L543.1 37.5c15.8-6.3 32.9 5.3 32.9 22.3V394.6c0 9.8-6 18.6-15.1 22.3L416 474.8zM15.1 95.1L160 37.2V423.6L32.9 474.5C17.1 480.8 0 469.2 0 452.2V117.4c0-9.8 6-18.6 15.1-22.3z"></path>
+                </svg>
+                <span id="country">Loading Country... </span>
+            </p>
+        </div>
+        <div style="height: 5%;"></div>
+        <div class="d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;"><iframe allowfullscreen="" frameborder="0" src="https://www.youtube-nocookie.com/embed/P9C25Un7xaM?autoplay=1&amp;mute=1" width="560" height="315" style="border: 4px solid #f0eeed;border-radius: 5px;box-shadow: 3px 3px 8px;"></iframe></div>
+    </section>
+
+    <div style="height: 25vh;"></div>
+    <section style="height: auto; width: 100%; display: flex; justify-content: center; align-items: center;">
+    <div class="centered" style="width: 1000px; text-align: center;">
+        <div style="height: 20%;"></div>
+        <div style="color: #f0eeed; font-size: 32px;">
+            <h1 style="font-size: 64px; font-family: SFProDisplay; font-weight: bold; color: #f0eeed;">
+                <img src="{{ url_for('static', filename='assets/img/image-white.png') }}" style="width: 64px; vertical-align: middle; margin-bottom: 15px;">
+                &nbsp;Today's Space Photo
+            </h1>
+        </div>
+        <!-- Centered content -->
+        <div class="centered" style="border: 4px solid #ffffff; border-radius: 5px; box-shadow: 4px 4px 6px; overflow: hidden;">
+            <img id="apod-image" class="img-fluid" alt="silhouette photography of person" width="560" height="315" loading="lazy" src="" style="margin-top: 10px;">
+            <video id="apod-video" src="" style="display: none; margin-top: 10px;" controls></video>
+            <iframe id="youtube-embed" class="centered" width="560" height="315" style="margin-top: 10px;"></iframe>
+            <p id="apod-text" class="centered" style="color: #ffffff; margin-top: 10px;"></p>
+            <p id="apod-text2" class="centered" style="width: 50%; color: #ffffff;"></p>
+            <h4 class="text-center">
+                <em>
+                    <a target="_blank" style="color: #ffffff; text-decoration: none;" href="https://apod.nasa.gov/apod/lib/apsubmit2015.html">
+                        Submit your own APOD images here!
+                    </a>
+                </em>
+            </h4>
+        </div>
+        <div style="height: 20%;"></div>
+    </div>
+</section>
+
+            
+    <div style="height: 25vh;"></div>
+    <div class="d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;">
+        <h1 class="text-center" style="font-size: 64px;font-family: SFProDisplay;font-weight: bold;color: #f0eeed;"><img style="width: 64px;padding-bottom: 15px;" src="{{ url_for('static', filename='assets/img/icons8-astronaut-50.png') }}">People in Space</h1>
+    </div>
+    <div class="text-center d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;">
         <h3 id="peopleinspace"></h3>
+    </div>    
+    <div style="height: 25vh;"></div>
+    <div class="d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;">
+        <h1 class="text-center" style="font-size: 64px;font-family: SFProDisplay;font-weight: bold;color: #f0eeed;"><img src="{{ url_for('static', filename='assets/img/icons8-planet-50.png') }}" style="width: 64px;padding-bottom: 15px;">&nbsp;Exoplanet data</h1>
     </div>
-
-    <div class="container">
-        <h1>Exo Planet Data</h1>
+    <div class="text-center d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;">
         <h3 id="exoplanets"></h3>
+    </div>    
+    <div style="height: 25vh;"></div>
+    <div class="d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;">
+        <h1 class="text-center" style="font-size: 64px;font-family: SFProDisplay;font-weight: bold;color: #f0eeed;"><img src="{{ url_for('static', filename='assets/img/icons8-earth-50.png') }}" style="width: 64px;padding-bottom: 15px;" width="64" height="79">&nbsp;Solar System Data</h1>
     </div>
-
-    <div class="container">
-        <h1>Solar System Data</h1>
+    <div class="text-center d-lg-flex justify-content-lg-center" style="color: #f0eeed;font-size: 32px;">
         <h3 id="solarsystem"></h3>
     </div>
-
-
-    
-    <div class="container">
-        <p><em>More coming soon!</em></p>
+    <div style="height: 2vh;">    
     </div>
+    <h4 style="color: white;" class="text-center"><em>Front end made by <a href="https://sneethan.xyz">Sneethan</a> And backend made by <a href="https://joshua.dog">Joshua</a></em></h4>
+
 
     <script>
         function updateiss() {
             $.get('/api/iss', { _: new Date().getTime() }, function(data) {
-                $('#current-coordinates').text("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
-                //console.log("Latitude: " + data.data.coordinates.latitude + ", Longitude: " + data.data.coordinates.longitude + ", Country: " + data.data.country_name);
+                $('#latitude').text("Latitude: " + data.data.coordinates.latitude);
+                $('#longitude').text("Longitude: " + data.data.coordinates.longitude);
+                $('#country').text("Country: " + data.data.country_name);
             });
         }
 
+
         function updateapod() {
-            $.get('/api/apod', { _: new Date().getTime() }, function(data) {
-                console.log("APOD Data Received:", data);  // Log the entire response
+        $.get('/api/apod', { _: new Date().getTime() }, function(data) {
+            console.log("APOD Data Received:", data);  // Log the entire response
+        
+            if (data.data.images && data.data.images.hdimage) {
+            $('#apod-image').attr('src', data.data.images.hdimage).show();
+            $('#apod-video').hide();
+            $('#youtube-embed').hide();
+        } else if (data.data.video) {
+                const videoUrl = data.data.video.url;
+                const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
             
-                if (data.data.images && data.data.images.hdimage) {
-                    $('#apod-image').attr('src', data.data.images.hdimage).show();
-                    $('#apod-video').hide();
-                    $('#youtube-embed').hide();
-                } else if (data.data.video) {
-                    const videoUrl = data.data.video.url;
-                    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
-                
-                    if (youtubeRegex.test(videoUrl)) {
-                        $('#youtube-embed').attr('src', videoUrl).show();
-                        $('#apod-video').hide();
-                    } else {
-                        $('#apod-video').attr('src', videoUrl).show();
-                        $('#youtube-embed').hide();
-                    }
-                    $('#apod-image').hide();
-                } else {
-                    $('#apod-image').hide();
-                    $('#apod-video').hide();
+                if (youtubeRegex.test(videoUrl)) {
+                $('#youtube-embed').attr('src', videoUrl).show();
+                $('#apod-video').hide();
+            } else {
+                    $('#apod-video').attr('src', videoUrl).show();
                     $('#youtube-embed').hide();
                 }
-            
-                if (data.data.description) {
-                    $('#apod-text').text(data.data.title + ' - ' + data.data.author + ' - ' + data.data.date);
-                    $('#apod-text2').text(data.data.description);
-                } else {
-                    console.error("APOD description is missing in the response");
-                }
-            }).fail(function() {
-                console.error("Failed to fetch APOD data");
-            });
+                $('#apod-image').hide();
+            } else {
+            $('#apod-image').hide();
+            $('#apod-video').hide();
+            $('#youtube-embed').hide();
         }
+        
+            if (data.data.description) {
+            $('#apod-text').text(data.data.title + ' - ' + data.data.author + ' - ' + data.data.date);
+            $('#apod-text2').text(data.data.description);
+        } else {
+                console.error("APOD description is missing in the response");
+            }
+
+            // Center all elements
+            $('.centered').css({
+            'display': 'flex',
+            'flex-direction': 'column',
+            'align-items': 'center',
+            'justify-content': 'center',
+            'text-align': 'center',
+        });
+        }).fail(function() {
+            console.error("Failed to fetch APOD data");
+        });
+    }
+
+
 
         function updatepeopleinspace() {
             $.get({
@@ -171,26 +288,92 @@
               });
             }
 
-
-        updateSolarSystemData();
-        updateExoplanetData();
-        updatepeopleinspace();
-        updateapod();
+            let canvas, ctx;
+        let dots = [];
+        const maxDots = 300; 
+                
+        function init() {
+             canvas = document.getElementById('backgroundCanvas');
+              ctx = canvas.getContext('2d');
+              adjustCanvasSize();
+              createDots(); 
+              animate(); 
+        }
+            
+        function adjustCanvasSize() {
+              canvas.width = window.innerWidth;
+              canvas.height = window.innerHeight;
+              createDots(); 
+            }
+            
+        function createDots() {
+              dots = []; 
+              for (let i = 0; i < maxDots; i++) {
+                dots.push({
+                  x: Math.random() * canvas.width,
+                  y: Math.random() * canvas.height,
+                  vx: Math.random() * 2 - 1, 
+                  vy: Math.random() * 2 - 1, 
+                  color: '#fff'
+                });
+              }
+            }
+            
+        function animate() {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              
+              for (let i = 0; i < dots.length; i++) {
+                const dot = dots[i];
+                
+                dot.x += dot.vx;
+                dot.y += dot.vy;
+                
+                if (dot.x < 0 || dot.x > canvas.width) {
+                  dot.vx *= -1;
+                }
+                if (dot.y < 0 || dot.y > canvas.height) {
+                  dot.vy *= -1;
+                }
+                
+                ctx.beginPath();
+                ctx.arc(dot.x, dot.y, 1, 0, Math.PI * 2);
+                ctx.fillStyle = dot.color;
+                ctx.fill();
+              }
+              
+              requestAnimationFrame(animate);
+            }
+            
+        function addDot(event) {
+              if (dots.length < maxDots) {
+                dots.push({
+                  x: event.clientX,
+                  y: event.clientY,
+                  vx: Math.random() * 2 - 1, 
+                  vy: Math.random() * 2 - 1, 
+                  color: '#fff'
+                });
+              }
+            }
         
-        setInterval(updateapod, 1800000);
-        setInterval(updateiss, 1000);
-    </script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+        
+            document.addEventListener('DOMContentLoaded', init);
+            document.addEventListener('click', addDot);
+            window.addEventListener('resize', adjustCanvasSize);
+            
+            $(document).ready(function() {
+                updateSolarSystemData();
+                updateExoplanetData();
+                updatepeopleinspace();
+                updateapod();
+                updateiss(); 
+                
+                setInterval(updateapod, 600000); 
+                setInterval(updateiss, 1000); 
+            });
 
-        body, h1, h3, p, em {
-            font-family: 'Roboto', sans-serif;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    </style>
+    </script>
+    <script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') }}"></script>
 </body>
+
 </html>

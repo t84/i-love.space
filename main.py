@@ -12,7 +12,7 @@ apikey_nasa = "Ah6cxAedN8mGI9jddu1hhZpLufc036UZE7J6AaBQ"
 app = Flask(__name__)
 
 
-DEVELOPMENT_ENV = False
+DEVELOPMENT_ENV = True
 
 
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})

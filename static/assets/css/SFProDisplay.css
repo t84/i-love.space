@@ -1,0 +1,161 @@
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-d178a825269933d817e06222540317db.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-583bf892c8e230b0638ca385f3eed333.woff) format('woff');
+	font-weight: 100;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-19fe28ac7f1259f07bea46eba4741c7f.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-9c9e8ff25bd7078a92c074c146fd49bf.woff) format('woff');
+	font-weight: 100;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-bc57defa7ffd597be69bbbb8a69759ac.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-34573b9193b02c6d59faf4784529bcfd.woff) format('woff');
+	font-weight: 100;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-e0552dfd6ebfbfec3111aaa4299619c4.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-98cf496e6aa67746a4255ed8a78fbfcf.woff) format('woff');
+	font-weight: 100;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-6de04b299085b09107c13889711cabfe.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-103f0faaaf25018f9f2822574ad3c873.woff) format('woff');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-9931cfba83607bad18da994e53c55529.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-dd98c0d69c9553d3a123685334922364.woff) format('woff');
+	font-weight: 300;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-1d6cc4e7eff152de88c4df63d503b40d.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-b6145d3d95d0e8a1a4a217dd69107ab3.woff) format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-30e7eaee8167f5e04202490f606dd518.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-986959a5ccf90eb595a2b9ccde434fe1.woff) format('woff');
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-1d7356792981cffda308a6cbc75c7da9.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-7bf72d54e52a24e241a43f66a52dbcf1.woff) format('woff');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-733ab319b9037ad9afef446108ce62b1.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-b03652087ff3233dcb7705a255996cae.woff) format('woff');
+	font-weight: 500;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-14b323eae121f22331559a0c36497cf1.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-d67e56e87e8d0af48035a461a0f3f7fb.woff) format('woff');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-cbfed8e8da07ab9fefbf628ba1f5ad50.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-76688e74ea779ad683c4a0cda09b6b19.woff) format('woff');
+	font-weight: 600;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-2ea2d0732807943ebca4efcd59bb7fda.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-ce3597fc244d8eeef4902d2f2e9b7063.woff) format('woff');
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-1ebca71c6b6084b1f05eeeb54c9afaa4.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-5d3ab8830c6b358a8751fbf8dfc6dca9.woff) format('woff');
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-710ee2a04f42a0bc680e9aa02517c5f1.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-d1e46b21ff03a9ce635458bea9ff8006.woff) format('woff');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-91128272bb2a29e3830cabaf3ed2165e.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-7d971656f419755c9db5475790e3c5e2.woff) format('woff');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-2024a383191ac182b8e9ab33c22413c0.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-f297b2a8c2dbb34bc51f63408dc503ef.woff) format('woff');
+	font-weight: 900;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProDisplay';
+	src: url(../../assets/fonts/SFProDisplay-26418fff0dca04d780d59d56a86c0c74.woff2) format('woff2'),
+	url(../../assets/fonts/SFProDisplay-a1e9143627701fc9d1d569dff0e4a296.woff) format('woff');
+	font-weight: 900;
+	font-style: italic;
+	font-display: swap;
+}

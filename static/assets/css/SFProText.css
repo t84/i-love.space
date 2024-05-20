@@ -1,0 +1,107 @@
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-59a798aeb5cd23a631a4c79bd0fab76f.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-8adb298c86c13e7d23880c26e856b84e.woff) format('woff');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-be111ba90af97b20346a487bc9fe3068.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-9b0b9527b9379014ddbb48c815e1c455.woff) format('woff');
+	font-weight: 300;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-106159d43391489263c5b91446c2da7a.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-689bfabbcaddaade0f07f94cf99fe09f.woff) format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-4dd583d189cae9ac64a53450e65037a0.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-b653bd806ed36a4fc02d7c80db1ecc6b.woff) format('woff');
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-0e1440259aa78a847d64feb0aa10c1d9.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-c6ec4352f8d7f9f59ccce430f0430b6c.woff) format('woff');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-3e116be06e1bcf46091e2a7820ac650e.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-43d10cb3847284162263910520c91056.woff) format('woff');
+	font-weight: 500;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-4f7d33df15de79aa734d64834abdce18.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-ed05ba972a802028a9cd5a6d4544696e.woff) format('woff');
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-70d04f5a351b04d465025a6a9a2bb121.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-edf7cddb49dc96d0ae62dd66319e2f00.woff) format('woff');
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-37bcf6ec7d0737ca71297a61a50736f7.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-60a42e9b87b6105e43705cc03b3cd1b7.woff) format('woff');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-352ba8fed4c1ea049d7c356bd315d509.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-3da5e1ddf8fb801da39d9cb92c2d85a3.woff) format('woff');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-22027b5878d45eb9bd7042c857592865.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-8cf36ae35ff5fa66da49c2ae805331bf.woff) format('woff');
+	font-weight: 900;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'SFProText';
+	src: url(../../assets/fonts/SFProText-b370920336f703c26f381e2e15be520c.woff2) format('woff2'),
+	url(../../assets/fonts/SFProText-4c5b7bed24256cbade979088efd929f9.woff) format('woff');
+	font-weight: 900;
+	font-style: italic;
+	font-display: swap;
+}
